@@ -1,0 +1,29 @@
+body {
+  text-align: center;
+  font-family: sans-serif;
+}
+
+#game-board {
+  display: grid;
+  grid-template-columns: repeat(9, 40px);
+  justify-content: center;
+  gap: 5px;
+  margin: 20px auto;
+  width: fit-content;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccff00;
+  cursor: pointer;
+}
+
+.blocked {
+  background-color: #666600;
+}
+
+.cat {
+  background-color: black;
+}
