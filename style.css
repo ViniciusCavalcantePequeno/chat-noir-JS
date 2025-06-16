@@ -50,7 +50,7 @@
 
     .cell.cat {
       background-color: black;
-      background-image: url('cat-icon.png'); /* Substitua pela imagem que quiser */
+      background-image: url('cat-icon.png'); 
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
