@@ -1,57 +1,57 @@
-body {
-  text-align: center;
-  font-family: sans-serif;
-  background-color: #D7CCC8;
-  margin: 0;
-  padding: 20px;
-}
+ body {
+      text-align: center;
+      font-family: sans-serif;
+      background-color: #D7CCC8;
+      margin: 0;
+      padding: 20px;
+    }
 
-#scoreboard {
-  margin-bottom: 20px;
-  color: black;
-  font-size: 18px;
-}
+    #scoreboard {
+      margin-bottom: 20px;
+      color: black;
+      font-size: 18px;
+    }
 
-#game-board {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
+    #game-board {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
 
-.row {
-  display: flex;
-  gap: 2px;
-}
+    .row {
+      display: flex;
+      gap: 2px;
+    }
 
-.row.offset {
-  margin-left: 26px; 
-}
+    .row.offset {
+      margin-left: 26px;
+    }
 
-.cell {
-  width: 50px;
-  height: 50px;
-  background-color: #8D6e63;
-  clip-path: polygon(
-    50% 0%,
-    93% 25%,
-    93% 75%,
-    50% 100%,
-    7% 75%,
-    7% 25%
-  );
-  cursor: pointer;
-  transition: 0.2s;
-}
+    .cell {
+      width: 50px;
+      height: 50px;
+      background-color: #8D6e63;
+      clip-path: polygon(
+        50% 0%,
+        93% 25%,
+        93% 75%,
+        50% 100%,
+        7% 75%,
+        7% 25%
+      );
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-.cell.blocked {
-  background-color: #ffab40;
-}
+    .cell.blocked {
+      background-color: #ffab40;
+    }
 
-.cell.cat {
-  background-color: black;
-  background-image: url('cat-icon.png');
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-}
+    .cell.cat {
+      background-color: black;
+      background-image: url('cat-icon.png'); /* Substitua pela imagem que quiser */
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
