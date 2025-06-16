@@ -5,7 +5,8 @@ body {
 
 #game-board {
   display: grid;
-  grid-template-columns: repeat(9, 40px);
+  grid-template-columns: repeat(11, 40px); /* 11 colunas */
+  grid-template-rows: repeat(11, 40px); /* 11 linhas */
   justify-content: center;
   gap: 5px;
   margin: 20px auto;
@@ -27,3 +28,4 @@ body {
 .cat {
   background-color: black;
 }
+

@@ -1,11 +1,11 @@
-const size = 9;
-let catPos = { row: 4, col: 4 };
+const size = 11; 
+let catPos = { row: 5, col: 5 }; 
 let playerScore = 0;
 let cpuScore = 0;
 
 function createBoard() {
   const board = document.getElementById("game-board");
-  board.innerHTML = "";
+  board.innerHTML = ""; 
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
       const cell = document.createElement("div");
@@ -17,6 +17,7 @@ function createBoard() {
     }
   }
   updateCatPosition();
+  placeFences(); 
 }
 
 function updateCatPosition() {
@@ -28,19 +29,20 @@ function updateCatPosition() {
 }
 
 function handlePlayerClick(row, col) {
-  if (row === catPos.row && col === catPos.col) return;
+  if (row === catPos.row && col === catPos.col) return; 
   const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-  if (cell.classList.contains("blocked")) return;
+  if (cell.classList.contains("blocked")) return; 
 
   cell.classList.add("blocked");
   cpuMove();
 }
 
 function cpuMove() {
-  // Aqui você pode implementar um algoritmo mais inteligente (BFS, A*)
   const directions = [
     { r: -1, c: 0 }, { r: 1, c: 0 }, { r: 0, c: -1 }, { r: 0, c: 1 }
   ];
+
+  
   for (const dir of directions) {
     const newRow = catPos.row + dir.r;
     const newCol = catPos.col + dir.c;
@@ -54,8 +56,7 @@ function cpuMove() {
       }
     }
   }
-
-  // Se não puder mover
+  
   alert("Você venceu!");
   playerScore++;
   updateScore();
@@ -77,8 +78,26 @@ function updateScore() {
 }
 
 function resetGame() {
-  catPos = { row: 4, col: 4 };
+  catPos = { row: 5, col: 5 }; 
   createBoard();
+}
+
+function placeFences() {
+  const fenceCount = Math.floor(Math.random() * 7) + 9; 
+  let placedFences = 0;
+
+  while (placedFences < fenceCount) {
+    const randomRow = Math.floor(Math.random() * size);
+    const randomCol = Math.floor(Math.random() * size);
+
+    if ((randomRow !== catPos.row || randomCol !== catPos.col) && 
+        !document.querySelector(`.cell[data-row="${randomRow}"][data-col="${randomCol}"]`).classList.contains("blocked")) {
+
+      const fenceCell = document.querySelector(`.cell[data-row="${randomRow}"][data-col="${randomCol}"]`);
+      fenceCell.classList.add("blocked"); 
+      placedFences++;
+    }
+  }
 }
 
 createBoard();
