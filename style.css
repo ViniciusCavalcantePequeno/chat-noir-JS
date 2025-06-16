@@ -1,31 +1,57 @@
 body {
   text-align: center;
   font-family: sans-serif;
+  background-color: #D7CCC8;
+  margin: 0;
+  padding: 20px;
+}
+
+#scoreboard {
+  margin-bottom: 20px;
+  color: black;
+  font-size: 18px;
 }
 
 #game-board {
-  display: grid;
-  grid-template-columns: repeat(11, 40px); /* 11 colunas */
-  grid-template-rows: repeat(11, 40px); /* 11 linhas */
-  justify-content: center;
-  gap: 5px;
-  margin: 20px auto;
-  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.row {
+  display: flex;
+  gap: 2px;
+}
+
+.row.offset {
+  margin-left: 26px; 
 }
 
 .cell {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #ccff00;
+  width: 50px;
+  height: 50px;
+  background-color: #8D6e63;
+  clip-path: polygon(
+    50% 0%,
+    93% 25%,
+    93% 75%,
+    50% 100%,
+    7% 75%,
+    7% 25%
+  );
   cursor: pointer;
+  transition: 0.2s;
 }
 
-.blocked {
-  background-color: #666600;
+.cell.blocked {
+  background-color: #ffab40;
 }
 
-.cat {
+.cell.cat {
   background-color: black;
+  background-image: url('cat-icon.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
-

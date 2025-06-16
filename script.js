@@ -1,75 +1,166 @@
-const size = 11; 
-let catPos = { row: 5, col: 5 }; 
+
+const size = 9;
+let catPos = { row: 4, col: 4 };
 let playerScore = 0;
 let cpuScore = 0;
 
 function createBoard() {
   const board = document.getElementById("game-board");
-  board.innerHTML = ""; 
+  board.innerHTML = "";
+
   for (let r = 0; r < size; r++) {
+    const rowDiv = document.createElement("div");
+    rowDiv.className = "row";
+    if (r % 2 !== 0) rowDiv.classList.add("offset");
+
     for (let c = 0; c < size; c++) {
       const cell = document.createElement("div");
       cell.className = "cell";
       cell.dataset.row = r;
       cell.dataset.col = c;
       cell.onclick = () => handlePlayerClick(r, c);
-      board.appendChild(cell);
+      rowDiv.appendChild(cell);
     }
+
+    board.appendChild(rowDiv);
   }
+
   updateCatPosition();
-  placeFences(); 
+  placeFences();
 }
 
 function updateCatPosition() {
   document.querySelectorAll(".cell").forEach(cell => {
     cell.classList.remove("cat");
   });
-  const index = catPos.row * size + catPos.col;
-  document.querySelectorAll(".cell")[index].classList.add("cat");
+  const cell = document.querySelector(`.cell[data-row="${catPos.row}"][data-col="${catPos.col}"]`);
+  if (cell) cell.classList.add("cat");
 }
 
 function handlePlayerClick(row, col) {
-  if (row === catPos.row && col === catPos.col) return; 
+  if (row === catPos.row && col === catPos.col) return;
+
   const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-  if (cell.classList.contains("blocked")) return; 
+  if (cell.classList.contains("blocked")) return;
 
   cell.classList.add("blocked");
   cpuMove();
 }
 
-function cpuMove() {
-  const directions = [
-    { r: -1, c: 0 }, { r: 1, c: 0 }, { r: 0, c: -1 }, { r: 0, c: 1 }
-  ];
+function getNeighborsHex(row, col) {
+  const evenRow = row % 2 === 0;
+  const directions = evenRow
+    ? [
+        { row: -1, col: 0 },  
+        { row: -1, col: -1 }, 
+        { row: 0, col: -1 },  
+        { row: 0, col: 1 },   
+        { row: 1, col: 0 },   
+        { row: 1, col: -1 }   
+      ]
+    : [
+        { row: -1, col: 1 },  
+        { row: -1, col: 0 }, 
+        { row: 0, col: -1 },  
+        { row: 0, col: 1 },   
+        { row: 1, col: 1 },   
+        { row: 1, col: 0 }    
+      ];
 
-  
-  for (const dir of directions) {
-    const newRow = catPos.row + dir.r;
-    const newCol = catPos.col + dir.c;
-    if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size) {
-      const cell = document.querySelector(`.cell[data-row="${newRow}"][data-col="${newCol}"]`);
-      if (!cell.classList.contains("blocked")) {
-        catPos = { row: newRow, col: newCol };
-        updateCatPosition();
-        checkVictory();
-        return;
-      }
-    }
-  }
-  
-  alert("Você venceu!");
-  playerScore++;
-  updateScore();
-  resetGame();
+  return directions.map(dir => ({
+    row: row + dir.row,
+    col: col + dir.col
+  }));
 }
 
-function checkVictory() {
-  if (catPos.row === 0 || catPos.row === size - 1 || catPos.col === 0 || catPos.col === size - 1) {
-    alert("O gato escapou!");
-    cpuScore++;
+function cpuMove() {
+  const directions = getNeighborsHex(catPos.row, catPos.col);
+  let foundEscape = false;
+
+  for (const neighbor of directions) {
+    if (
+      neighbor.row < 0 || neighbor.row >= size ||
+      neighbor.col < 0 || neighbor.col >= size
+    ) {
+      foundEscape = true;
+      break;
+    }
+  }
+
+  if (foundEscape) {
+    setTimeout(() => {
+      alert("O gato escapou!");
+      cpuScore++;
+      updateScore();
+      resetGame();
+    }, 500); 
+    return;
+  }
+
+  const queue = [];
+  const visited = Array.from({ length: size }, () => Array(size).fill(false));
+  const parent = Array.from({ length: size }, () => Array(size).fill(null));
+
+  queue.push(catPos);
+  visited[catPos.row][catPos.col] = true;
+
+  let escapeCell = null;
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    const neighbors = getNeighborsHex(current.row, current.col);
+
+    for (const neighbor of neighbors) {
+      if (
+        neighbor.row < 0 || neighbor.row >= size ||
+        neighbor.col < 0 || neighbor.col >= size
+      ) {
+        escapeCell = current;
+        break;
+      }
+
+      if (
+        neighbor.row >= 0 && neighbor.row < size &&
+        neighbor.col >= 0 && neighbor.col < size &&
+        !visited[neighbor.row][neighbor.col]
+      ) {
+        const cell = document.querySelector(`.cell[data-row="${neighbor.row}"][data-col="${neighbor.col}"]`);
+        if (cell && !cell.classList.contains("blocked")) {
+          visited[neighbor.row][neighbor.col] = true;
+          parent[neighbor.row][neighbor.col] = current;
+          queue.push(neighbor);
+        }
+      }
+    }
+
+    if (escapeCell) break;
+  }
+
+  if (escapeCell) {
+    let path = [];
+    let node = escapeCell;
+
+    while (node && !(node.row === catPos.row && node.col === catPos.col)) {
+      path.push(node);
+      node = parent[node.row][node.col];
+    }
+
+    if (path.length > 0) {
+      const nextStep = path[path.length - 1];
+      setTimeout(() => {
+        catPos = { row: nextStep.row, col: nextStep.col };
+        updateCatPosition();
+      }, 100);
+      return;
+    }
+  }
+
+  setTimeout(() => {
+    alert("Você venceu!");
+    playerScore++;
     updateScore();
     resetGame();
-  }
+  }, 200);
 }
 
 function updateScore() {
@@ -78,24 +169,23 @@ function updateScore() {
 }
 
 function resetGame() {
-  catPos = { row: 5, col: 5 }; 
+  catPos = { row: 4, col: 4 };
   createBoard();
 }
 
 function placeFences() {
-  const fenceCount = Math.floor(Math.random() * 7) + 9; 
-  let placedFences = 0;
+  const fenceCount = Math.floor(Math.random() * 7) + 9;
+  let placed = 0;
 
-  while (placedFences < fenceCount) {
-    const randomRow = Math.floor(Math.random() * size);
-    const randomCol = Math.floor(Math.random() * size);
+  while (placed < fenceCount) {
+    const r = Math.floor(Math.random() * size);
+    const c = Math.floor(Math.random() * size);
+    if (r === catPos.row && c === catPos.col) continue;
 
-    if ((randomRow !== catPos.row || randomCol !== catPos.col) && 
-        !document.querySelector(`.cell[data-row="${randomRow}"][data-col="${randomCol}"]`).classList.contains("blocked")) {
-
-      const fenceCell = document.querySelector(`.cell[data-row="${randomRow}"][data-col="${randomCol}"]`);
-      fenceCell.classList.add("blocked"); 
-      placedFences++;
+    const cell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+    if (cell && !cell.classList.contains("blocked")) {
+      cell.classList.add("blocked");
+      placed++;
     }
   }
 }
