@@ -1,0 +1,13 @@
+{
+  "name": "Flutter Development",
+  "image": "mcr.microsoft.com/vscode/devcontainers/flutter:stable", 
+  "postCreateCommand": "flutter doctor",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "dart-code.flutter",
+    "dart-code.dart"
+  ],
+  "forwardPorts": [8000]
+}
